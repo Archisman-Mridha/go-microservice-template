@@ -1,0 +1,5 @@
+redisURL: localhost:6379
+postgresURL: postgres://localhost:5432@app:default/chats?sslmode=disable
+
+jaegerURL: localhost:4317
+metricsServerPort: 6000

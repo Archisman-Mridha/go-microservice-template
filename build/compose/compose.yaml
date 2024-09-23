@@ -1,0 +1,30 @@
+name: instagram-clone
+
+services:
+
+  jaeger:
+    container_name: jaeger
+    image: jaegertracing/all-in-one:latest
+    hostname: jaeger
+    ports:
+      - 4317:4317
+      - 16686:16686
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    hostname: prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./build/compose/configs/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
+
+  autometrics:
+    container_name: autometrics
+    image: autometrics/am-proxy
+    environment:
+      - PROMETHEUS_URL=http://prometheus:9090
+    ports:
+      - 6789:6789

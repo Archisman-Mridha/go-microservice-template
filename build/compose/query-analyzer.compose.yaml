@@ -1,0 +1,27 @@
+name: query-analyzer
+
+services:
+
+  postgres:
+    container_name: postgres-testing
+    image: postgres:alpine
+    hostname: postgres-testing
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=chats
+
+  pg_admin:
+    container_name: pg_admin
+    image: dpage/pgadmin4:latest
+    hostname: pg_admin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=archismanmridha12345@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=password
+    ports:
+      - 5050:80
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+volumes:
+  pgadmin-data:

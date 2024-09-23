@@ -1,0 +1,6 @@
+build/
+.dockerignore
+
+*.test.yaml
+*.md
+LICENSE
