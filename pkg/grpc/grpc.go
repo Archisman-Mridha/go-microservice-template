@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net"
@@ -66,14 +67,14 @@ func CreateGRPCServer(healthcheckables []healthcheck.Healthcheckable) *grpc.Serv
 }
 
 // Creates a TCP listener at the given address and uses it to run the given gRPC server instance.
-func RunGRPCServer(server *grpc.Server, port int) error {
+func RunGRPCServer(ctx context.Context, server *grpc.Server, port int) error {
 	address := fmt.Sprintf("0.0.0.0:%d", port)
 	tcpListener, err := net.Listen("tcp", address)
 	if err != nil {
 		return fmt.Errorf("failed creating TCP listener : %v", err)
 	}
 
-	slog.Info("Starting gRPC server", slog.String("address", address))
+	slog.InfoContext(ctx, "Starting gRPC server", slog.String("address", address))
 	if err := server.Serve(tcpListener); err != nil {
 		return fmt.Errorf("gRPC server error occurred : %v", err)
 	}

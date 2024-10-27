@@ -15,7 +15,7 @@ CREATE INDEX chat_pariticipants_user_id_idx ON chat_participants (user_id);
 CREATE INDEX chat_pariticipants_chat_id_idx ON chat_participants (chat_id);
 
 CREATE TABLE messages (
-  id SERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY,
   chat_id INTEGER NOT NULL REFERENCES chats(id),
   message VARCHAR(2000) NOT NULL,
   sender_id INTEGER NOT NULL,

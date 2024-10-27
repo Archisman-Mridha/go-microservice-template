@@ -9,14 +9,20 @@ import (
 
 type (
 	GetChatsArgs struct {
-		UserID int32
+		UserID            int32
+		PaginationOptions types.PaginationOptions
 	}
 
 	GetChatsOutput struct {
-		Chat []types.Chat
+		Chats []*types.Chat
 	}
 )
 
 func (u *Usecases) GetChats(ctx context.Context, args *GetChatsArgs) (*GetChatsOutput, error) {
-	panic(constants.UNIMPLEMENTED)
+	chats, err := u.db.GetChats(ctx, args.UserID, args.PaginationOptions)
+	if err != nil {
+		return nil, constants.ErrServer
+	}
+
+	return &GetChatsOutput{Chats: chats}, nil
 }

@@ -35,7 +35,7 @@ ORDER BY
   latest_message.sent_at DESC
 LIMIT $2 OFFSET $3;
 
--- name: GetChatMessages :many
+-- name: GetMessages :many
 SELECT
   id,
   message,
@@ -49,10 +49,11 @@ ORDER BY
   sent_at DESC
 LIMIT $2 OFFSET $3;
 
--- name: CreateChat :exec
+-- name: CreateChat :one
 INSERT INTO
   chats
-DEFAULT VALUES;
+DEFAULT VALUES
+RETURNING id;
 
 -- name: CreateChatParticipant :exec
 INSERT INTO
@@ -60,8 +61,8 @@ INSERT INTO
 VALUES
   ($1, $2);
 
--- name: CreateChatMessage :exec
+-- name: CreateMessage :exec
 INSERT INTO
-  messages(chat_id, message, sender_id, sent_at)
+  messages(id, chat_id, message, sender_id, sent_at)
 VALUES
-  ($1, $2, $3, $4);
+  ($1, $2, $3, $4, $5);

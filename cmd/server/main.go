@@ -51,7 +51,7 @@ func main() {
 	defer cancel()
 
 	if err := run(ctx); err != nil {
-		slog.Error(err.Error())
+		slog.ErrorContext(ctx, err.Error())
 
 		cancel()
 		time.Sleep(constants.RESOURCE_CLEANUP_TIMEOUT) // Give some time for remaining resources to be freed.
@@ -75,8 +75,8 @@ func run(ctx context.Context) error {
 	metricsServer := utils.InitMetricsServer(waitGroup, waitGroupCtx, config.MetricsServerPort)
 
 	var (
-		postgresAdapter = postgres.NewDatabaseAdapter(config.PostgresURL)
-		redisAdapter    = redis.NewKVStoreAdapter(config.RedisURL)
+		postgresAdapter = postgres.NewDatabaseAdapter(waitGroupCtx, config.PostgresURL)
+		redisAdapter    = redis.NewKVStoreAdapter(ctx, config.RedisURL)
 
 		healthcheckables = []healthcheck.Healthcheckable{
 			postgresAdapter,
@@ -88,9 +88,9 @@ func run(ctx context.Context) error {
 
 	// Run gRPC server.
 	server := grpc.CreateGRPCServer(healthcheckables)
-	generated.RegisterChatServiceServer(server, api.NewChatServiceGRPCAPI(usecases))
+	generated.RegisterChatServiceServer(server, api.NewChatServiceGRPCAPI(usecases, redisAdapter))
 	waitGroup.Go(func() error {
-		return grpc.RunGRPCServer(server, config.GRPCServerPort)
+		return grpc.RunGRPCServer(ctx, server, config.GRPCServerPort)
 	})
 
 	// Handle shutdown gracefully.
@@ -104,22 +104,22 @@ func run(ctx context.Context) error {
 				(2) Any of the go-routines registered under this wait-group, finishes running.
 		*/
 		<-waitGroupCtx.Done()
-		slog.Info("Gracefully shutting down program. Cleaning up resources")
+		slog.InfoContext(ctx, "Gracefully shutting down program. Cleaning up resources")
 
 		// Stop the gRPC server from accepting new connections and RPCs and block until all the pending
 		// RPCs are finished.
 		server.GracefulStop()
-		slog.Info("Shutdown gRPC server")
+		slog.InfoContext(ctx, "Shutdown gRPC server")
 
 		if err := metricsServer.Close(); err != nil {
-			slog.Error("Failed shutting down HTTP metrics server", logger.Error(err))
+			slog.ErrorContext(ctx, "Failed shutting down HTTP metrics server", logger.Error(err))
 		}
-		slog.Info("Shutdown HTTP metrics server")
+		slog.InfoContext(ctx, "Shutdown HTTP metrics server")
 
 		if err := traceExporter.Shutdown(context.Background()); err != nil {
-			slog.Error("Failed shutting down trace exporter", logger.Error(err))
+			slog.ErrorContext(ctx, "Failed shutting down trace exporter", logger.Error(err))
 		}
-		slog.Info("Shutdown trace exporter")
+		slog.InfoContext(ctx, "Shutdown trace exporter")
 
 		return nil
 	})

@@ -19,7 +19,7 @@ func InitMetricsServer(waitGroup *errgroup.Group, waitGroupCtx context.Context, 
 	http.Handle("/metrics", promhttp.Handler())
 
 	waitGroup.Go(func() error {
-		slog.Info("Starting metrics HTTP server", slog.String("address", server.Addr))
+		slog.InfoContext(waitGroupCtx, "Starting metrics HTTP server", slog.String("address", server.Addr))
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			return err
 		}

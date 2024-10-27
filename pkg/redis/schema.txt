@@ -2,7 +2,7 @@
   kv: {
     // Map userID to the instanceID to which he / she is connected.
     // The instanceID is provided by the orchestrator. For example, in case of Kubernetes, it'll be
-    // the Pod name.
+    // the Pod IP.
     userID -> instanceID
   }
 }
