@@ -1,0 +1,11 @@
+version: "2"
+sql:
+  - engine: postgresql
+    schema: internal/adapters/repositories/users/schema.sql
+    queries: internal/adapters/repositories/users/queries.sql
+    gen:
+      go:
+        emit_interface: true
+        sql_package: "database/sql"
+        out: internal/adapters/repositories/users/generated
+        package: generated

@@ -1,0 +1,20 @@
+version: "3"
+
+tasks:
+  buf-generate:
+    cmd: buf generate
+
+  sqlc-generate:
+    cmd: sqlc generate
+
+  compose-up:
+    dir: ./deploy/compose/
+    env:
+      CUE_EXPERIMENT: evalv3
+    cmds:
+      - cue export ./src/ --out yaml > ./out/compose.yaml
+      - docker-compose -f ./out/compose.yaml up -d
+
+  compose-down:
+    dir: ./deploy/compose/
+    cmd: docker-compose -f ./out/compose.yaml down
