@@ -17,11 +17,8 @@
 - [gRPC](https://grpc.io)
 - [OpenFeature](https://openfeature.dev)
 - [Flagsmith](https://www.flagsmith.com)
-- [Buildsafe](https://buildsafe.dev)
 - [CueLang](https://cuelang.org)
 - [OpenObserve](https://www.openobserve.ai)
 - [Cosign](https://github.com/sigstore/cosign)
 
 ## REFERENCES
-
-- [Buildsafe examples](https://github.com/buildsafedev/examples/tree/main)

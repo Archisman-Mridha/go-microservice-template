@@ -2,7 +2,6 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    buildsafe.url = "github:buildsafedev/bsf";
   };
 
   outputs =
@@ -10,7 +9,6 @@
       self,
       nixpkgs,
       flake-utils,
-      buildsafe,
       ...
     }:
     flake-utils.lib.eachDefaultSystem (
@@ -34,7 +32,6 @@
 
             sqlc
 
-            buildsafe.packages.${system}.default
             cue
             docker-compose
             k3d
